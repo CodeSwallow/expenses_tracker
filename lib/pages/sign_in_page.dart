@@ -13,7 +13,6 @@ class SignInPage extends StatelessWidget {
       backgroundColor: Colors.green.shade900,
       body: DefaultTabController(
         length: 2,
-
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
