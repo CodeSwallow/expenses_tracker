@@ -1,21 +1,26 @@
+import 'package:expenses_tracker/widgets/signin/register_form.dart';
+import 'package:expenses_tracker/widgets/signin/sign_in_form.dart';
 import 'package:flutter/material.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({Key? key}) : super(key: key);
+  static const routeName = '/';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green.shade800,
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.green.shade900,
       body: DefaultTabController(
         length: 2,
+
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Center(
                 child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 80),
+                  margin: const EdgeInsets.symmetric(vertical: 70),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -39,7 +44,7 @@ class SignInPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Keep track of your expenses',
+                            'Tracking Made Easy',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -69,8 +74,8 @@ class SignInPage extends StatelessWidget {
               const Expanded(
                 child: TabBarView(
                   children: [
-                    Text('Log in'),
-                    Text('Register'),
+                    Center(child: SignInForm()),
+                    Center(child: RegisterForm()),
                   ],
                 ),
               ),
