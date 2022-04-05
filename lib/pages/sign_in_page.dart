@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:expenses_tracker/widgets/signin/register_form.dart';
 import 'package:expenses_tracker/widgets/signin/sign_in_form.dart';
-import 'package:flutter/material.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({Key? key}) : super(key: key);
-  static const routeName = '/';
+  static const routeName = '/sign-in';
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +70,19 @@ class SignInPage extends StatelessWidget {
                   ),
                 ],
               ),
-              const Expanded(
+              Expanded(
                 child: TabBarView(
                   children: [
-                    Center(child: SignInForm()),
-                    Center(child: RegisterForm()),
+                    Center(
+                        child: SignInForm(
+                      showErrorDialog: (context, title, e) =>
+                          _showErrorDialog(context, title, e),
+                    )),
+                    Center(
+                        child: RegisterForm(
+                      showErrorDialog: (context, title, e) =>
+                          _showErrorDialog(context, title, e),
+                    )),
                   ],
                 ),
               ),
@@ -82,6 +90,51 @@ class SignInPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String title, Exception e) {
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            title,
+            style: const TextStyle(fontSize: 24),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  '${(e as dynamic).message}',
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: Colors.green.shade900,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey.shade300,
+                elevation: 5,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 80, vertical: 12),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

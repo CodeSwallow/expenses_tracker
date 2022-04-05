@@ -1,4 +1,6 @@
+import 'package:expenses_tracker/providers/application_state.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -6,9 +8,20 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: const Center(child: Text('Home Page')),
+    return Consumer<ApplicationState>(
+      builder: (context, appState, _) => Scaffold(
+        drawer: Drawer(
+          backgroundColor: Colors.indigo.shade900,
+          child: TextButton(
+            child: const Text('Sign out'),
+            onPressed: () {
+              appState.signOut();
+            },
+          ),
+        ),
+        appBar: AppBar(),
+        body: const Center(child: Text('Home Page')),
+      ),
     );
   }
 }

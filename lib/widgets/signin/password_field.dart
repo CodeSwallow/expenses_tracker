@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PasswordField extends StatefulWidget {
-  const PasswordField({Key? key}) : super(key: key);
+  const PasswordField({Key? key, required this.passwordController})
+      : super(key: key);
+  final TextEditingController passwordController;
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -13,6 +15,7 @@ class _PasswordFieldState extends State<PasswordField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: widget.passwordController,
       obscureText: _passwordHidden,
       obscuringCharacter: "*",
       autocorrect: false,
@@ -26,17 +29,24 @@ class _PasswordFieldState extends State<PasswordField> {
           borderRadius: BorderRadius.circular(15),
         ),
         suffixIcon: IconButton(
-            icon: Icon(
-              Icons.remove_red_eye,
-              color:
-                  _passwordHidden ? Colors.grey.shade900 : Colors.grey.shade300,
-            ),
-            onPressed: () {
-              setState(() {
-                _passwordHidden = !_passwordHidden;
-              });
-            }),
+          icon: Icon(
+            Icons.remove_red_eye,
+            color:
+                _passwordHidden ? Colors.grey.shade900 : Colors.grey.shade300,
+          ),
+          onPressed: () {
+            setState(() {
+              _passwordHidden = !_passwordHidden;
+            });
+          },
+        ),
       ),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Enter your password';
+        }
+        return null;
+      },
     );
   }
 }
