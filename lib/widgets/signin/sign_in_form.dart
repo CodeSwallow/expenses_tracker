@@ -1,4 +1,4 @@
-import 'package:expenses_tracker/providers/application_state.dart';
+import 'package:expenses_tracker/services/AuthenticationService.dart';
 import 'package:expenses_tracker/widgets/signin/email_field.dart';
 import 'package:expenses_tracker/widgets/signin/password_field.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +26,9 @@ class _SignInFormState extends State<SignInForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ApplicationState>(
-      builder: (context, appState, _) => Form(
-        key: _formKey,
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
         child: Column(
           children: [
             Container(
@@ -42,35 +42,11 @@ class _SignInFormState extends State<SignInForm> {
               child: PasswordField(passwordController: passwordController),
             ),
             ElevatedButton(
-              onPressed: () async {
+              onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  await appState.verifyEmail(
-                    emailController.text,
-                    (e) => widget.showErrorDialog(context, 'Sign In', e),
-                  );
-                  if (appState.email != '') {
-                    await appState.signInWithEmailAndPassword(
-                      emailController.text,
-                      passwordController.text,
-                      (e) => widget.showErrorDialog(context, 'Sign In', e),
-                    );
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Sign In'),
-                        content: const Text('Incorrect Email or Password'),
-                        actions: [
-                          TextButton(
-                            child: const Text('OK'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+                  context
+                      .read<AuthenticationService>()
+                      .signIn(emailController.text, passwordController.text);
                 }
               },
               child: Text(

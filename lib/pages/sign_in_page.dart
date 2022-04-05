@@ -73,16 +73,14 @@ class SignInPage extends StatelessWidget {
               Expanded(
                 child: TabBarView(
                   children: [
-                    Center(
-                        child: SignInForm(
+                    SignInForm(
                       showErrorDialog: (context, title, e) =>
                           _showErrorDialog(context, title, e),
-                    )),
-                    Center(
-                        child: RegisterForm(
+                    ),
+                    RegisterForm(
                       showErrorDialog: (context, title, e) =>
                           _showErrorDialog(context, title, e),
-                    )),
+                    ),
                   ],
                 ),
               ),

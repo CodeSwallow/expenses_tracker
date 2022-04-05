@@ -1,4 +1,4 @@
-import 'package:expenses_tracker/providers/application_state.dart';
+import 'package:expenses_tracker/services/AuthenticationService.dart';
 import 'package:expenses_tracker/widgets/signin/email_field.dart';
 import 'package:expenses_tracker/widgets/signin/password_field.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +29,9 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ApplicationState>(
-      builder: (context, appState, _) => Form(
-        key: _formKey,
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
         child: Column(
           children: [
             Container(
@@ -50,18 +50,12 @@ class _RegisterFormState extends State<RegisterForm> {
               child: PasswordField(passwordController: passwordController2),
             ),
             ElevatedButton(
-              onPressed: () async {
+              onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   if (passwordController1.text == passwordController2.text) {
-                    appState.registerAccount(
-                      emailController.text,
-                      passwordController1.text,
-                      (e) => widget.showErrorDialog(context, 'Sign In', e),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Passwords must match')),
-                    );
+                    context
+                        .read<AuthenticationService>()
+                        .signUp(emailController.text, passwordController1.text);
                   }
                 }
               },

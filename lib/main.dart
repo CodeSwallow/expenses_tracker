@@ -1,16 +1,18 @@
 import 'package:expenses_tracker/pages/home_page.dart';
 import 'package:expenses_tracker/pages/sign_in_page.dart';
-import 'package:expenses_tracker/providers/application_state.dart';
+import 'package:expenses_tracker/services/AuthenticationService.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => ApplicationState(),
-      builder: (context, _) => const MyApp(),
-    ),
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,44 +20,41 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Expenses Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        Provider<AuthenticationService>(
+          create: (_) => AuthenticationService(FirebaseAuth.instance),
+        ),
+        StreamProvider(
+          create: (context) =>
+              context.read<AuthenticationService>().authStateChanges,
+          initialData: null,
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Expenses Tracker',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const AuthenticationWrapper(),
+        routes: {
+          SignInPage.routeName: (context) => const SignInPage(),
+          HomePage.routeName: (context) => const HomePage(),
+        },
       ),
-      home: Consumer<ApplicationState>(
-        builder: (context, appState, _) =>
-            Authentication(loginState: appState.loginState),
-      ),
-      routes: {
-        SignInPage.routeName: (context) => const SignInPage(),
-        HomePage.routeName: (context) => const HomePage(),
-      },
     );
   }
 }
 
-class Authentication extends StatelessWidget {
-  const Authentication({
-    Key? key,
-    required this.loginState,
-  }) : super(key: key);
-
-  final ApplicationLoginState loginState;
+class AuthenticationWrapper extends StatelessWidget {
+  const AuthenticationWrapper({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    switch (loginState) {
-      case ApplicationLoginState.loggedOut:
-        return const SignInPage();
-      case ApplicationLoginState.loggedIn:
-        return const HomePage();
-      default:
-        return Row(
-          children: const [
-            Text("Internal error, this shouldn't happen..."),
-          ],
-        );
+    final firebaseUser = context.watch<User?>();
+    if (firebaseUser == null) {
+      return const SignInPage();
     }
+    return const HomePage();
   }
 }
